@@ -4,12 +4,16 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hz.caricature.utils.Constant;
 import org.hz.caricature.utils.DBUtil;
 import org.hz.caricature.utils.JsoupUtil;
 import org.jsoup.internal.StringUtil;
 
 public class AcgDownFormDbView {
+	private Logger log = LogManager.getLogger(AcgDownFormDbView.class);
+	
 	String path = "F:\\图片区\\我是谁";
 	
 	public void startTask() {
@@ -18,7 +22,7 @@ public class AcgDownFormDbView {
 					+"FROM t_caricatures c "
 					+"WHERE c.state=0 "
 					+"ORDER BY create_time";
-			
+			log.info(sql);
 			List<Map<String, Object>> list = DBUtil.query(sql, null);
 			for(Map<String, Object> map:list){
 				downChapter(map.get("id").toString(), map.get("name").toString());
@@ -31,7 +35,7 @@ public class AcgDownFormDbView {
 	
 	public void downChapter(String p_id,String name) throws InterruptedException{
 		if(!StringUtil.isBlank(name)){
-			System.out.println(name);
+			log.info(name);
 			String temp = path+Constant.pathSeparator+name;
 			File file = new File(temp);
 			if(!file.exists()){
@@ -47,14 +51,14 @@ public class AcgDownFormDbView {
 			sql = "update t_caricatures set state='2' WHERE state='0' and id=?";
 			DBUtil.update(sql, new Object[]{p_id});
 		}else{
-			System.out.println("name is null");
+			log.info("name is null");
 		}
 		
 	}
 	
 	
 	public boolean downImg(String url, String path, String fileName, String id){
-		System.out.print("save "+fileName);
+		log.info("save "+fileName);
 		boolean b = false;
 		try{
 			b = JsoupUtil.down(url, path, fileName, Constant.type);

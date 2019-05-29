@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hz.caricature.utils.Constant;
 import org.hz.caricature.utils.DBUtil;
 import org.hz.caricature.utils.GuidUtil;
@@ -18,6 +20,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class AcgDbView {
+	private Logger log = LogManager.getLogger(AcgDbView.class);
+	
 	private String tableName = "t_caricatures";
 	private String tableNameExt = "t_caricatures_ext";
 	private String baseURL = "http://m.mwspyxgs.com";
@@ -38,12 +42,15 @@ public class AcgDbView {
 					+"WHERE c.id=e.p_id "
 					+"ORDER BY create_time "
 					+"DESC LIMIT 1";
+			log.info(sql);
 			List<Map<String, Object>> list = DBUtil.query(sql, null);
 			if(list != null){
 				Map<String, Object> map = list.get(0);
 				String id = map.get("id").toString();
 				String url = map.get("url").toString();
 				int s = Integer.valueOf(map.get("s").toString());
+				log.info(id);
+				log.info(url);
 				chaptersTask(url, id, s+1);
 			}
 		} catch (Exception e) {
